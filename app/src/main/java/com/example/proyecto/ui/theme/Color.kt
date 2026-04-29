@@ -9,3 +9,18 @@ val Pink80 = Color(0xFFEFB8C8)
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
+
+val GreenSavings = Color(0xFF183469)
+val NavyDeep = Color(0xFF1B2631)
+val TextLight = Color(0xFFF7F9F9)
+val TextDark = Color(0xFF2C3E50)
+
+// Colores para Modo Oscuro
+val DarkPrimary = GreenSavings
+val DarkBackground = Color(0xFF12172E)
+val DarkSurface = Color(0xFF1E1E1E)
+
+// Colores para Modo Claro
+val LightPrimary = Color(0xFF18336B)
+val LightBackground = Color(0xFFE1EAFA)
+val LightSurface = Color(0xFFF2F4F4)

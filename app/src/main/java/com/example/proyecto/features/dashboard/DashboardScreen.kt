@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.proyecto.ui.PiggoBottomBar
 import com.example.proyecto.ui.PiggoMascot
+import com.example.proyecto.ui.theme.MontserratFamily
+import com.example.proyecto.ui.theme.TextLight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,7 +26,7 @@ fun DashboardScreen(
 ) {
     val state by viewModel.piggoState.collectAsState()
 
-    val colorAzulMarino = Color(0xFF1A346C)
+    val colorAzulMarino = Color(0xFF0058A2)
     val colorVerdeMenta = Color(0xFF92E8BF)
 
     Scaffold(
@@ -65,13 +67,16 @@ fun DashboardScreen(
             Text(
                 text = "Balance: $12,500.00",
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Light,
-                color = colorAzulMarino
+                fontFamily = MontserratFamily,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = "Actualmente piggy está: Estable",
                 fontSize = 18.sp,
-                color = Color.Gray
+                fontFamily = MontserratFamily,
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -80,7 +85,7 @@ fun DashboardScreen(
                 text = "Metas:",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
-                color = colorAzulMarino,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -93,13 +98,13 @@ fun DashboardScreen(
                 PiggoCircularChart(
                     title = "Ingresos",
                     progress = 0.75f,
-                    color = colorAzulMarino
+                    color = colorVerdeMenta,
                 )
 
                 PiggoCircularChart(
                     title = "Gastos",
                     progress = 0.40f,
-                    color = colorVerdeMenta
+                    color = colorAzulMarino,
                 )
             }
         }
@@ -107,7 +112,12 @@ fun DashboardScreen(
 }
 
 @Composable
-fun PiggoCircularChart(title: String, progress: Float, color: Color) {
+fun PiggoCircularChart(
+    title: String,
+    progress: Float,
+    color: Color,
+    titleColor: Color = MaterialTheme.colorScheme.onBackground
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.size(130.dp)
@@ -130,7 +140,7 @@ fun PiggoCircularChart(title: String, progress: Float, color: Color) {
             text = title,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = Color.DarkGray
+            color = MaterialTheme.colorScheme.onBackground,
         )
     }
 }
