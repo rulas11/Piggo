@@ -13,7 +13,7 @@ import com.example.proyecto.R
 fun PiggoMascot(state: FinancialState) {
     val resId = when(state) {
         FinancialState.EXCELLENT -> R.raw.piggo_happy
-        //FinancialState.WARNING -> R.raw.piggo_warning
+        FinancialState.WARNING -> R.raw.piggo_warning
         //FinancialState.CRITICAL -> R.raw.piggo_panic
         else -> R.raw.piggo_happy
     }

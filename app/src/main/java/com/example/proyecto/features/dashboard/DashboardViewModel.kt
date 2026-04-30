@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.proyecto.FinancialState
 
 class PiggoViewModel  : ViewModel() {
-    private val _state = MutableStateFlow(FinancialState.STABLE)
+    private val _state = MutableStateFlow(FinancialState.WARNING)
     val piggoState = _state.asStateFlow()
 
     fun updateFinancials(balance: Double, limit: Double) {
