@@ -69,7 +69,7 @@ fun AnalisisScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Prueba",
+                text = "Prueba Analisis",
                 fontSize = 18.sp,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.Normal,

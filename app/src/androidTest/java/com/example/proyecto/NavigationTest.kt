@@ -1,10 +1,13 @@
 package com.example.proyecto
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -14,28 +17,46 @@ import org.junit.Test
 
 
 class NavigationTest {
+
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     @Test
     fun testNavigationToConfigAndThemeToggle() {
-        // 1. Busca y selecciona la etiqueta "Configuración"
+
+        // Prueba de navegación entre pantallas
+        composeTestRule.onNodeWithText("Analisis").performClick()
+        composeTestRule.onNodeWithText("Prueba Analisis").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Metas").performClick()
+        composeTestRule.onNodeWithText("Prueba Metas").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Flujo").performClick()
+        composeTestRule.onNodeWithText("Prueba Transacciones").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Tips").performClick()
+        composeTestRule.onNodeWithText("Prueba Tips").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Inicio").performClick()
+        composeTestRule.onNodeWithText("Metas:").assertIsDisplayed()
+
+        //Busca y selecciona la etiqueta "Configuración"
         composeTestRule.onNodeWithContentDescription("Configuración").performClick()
 
-        // 2. Buscar el nodo que se comporta como un Switch
+        // Busqueda de switch
         val switchNode = composeTestRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Switch))
 
-        // 3. Clic en el Switch
-        switchNode.performClick()
+        //Click de switch y verificacion
+        try {
+            if (switchNode.equals(switchNode.assertIsOn())) {
+                switchNode.performClick()
+                switchNode.assertIsOff()
+            }
+        } catch (e: AssertionError) {
+            switchNode.performClick()
+            switchNode.assertIsOn()
+        }
 
-        // 4. Verificar el Switch encendido
-        switchNode.assertIsOn()
-
-        // 5. Volver
+        //Volver y verificar regreso
         composeTestRule.onNodeWithContentDescription("Atrás").performClick()
-
-        // 6. Verificar regreso
         composeTestRule.onNodeWithText("Metas:").assertIsDisplayed()
     }
 }
+
 

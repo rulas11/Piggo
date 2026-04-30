@@ -69,7 +69,7 @@ fun GoalsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Prueba",
+                text = "Prueba Metas",
                 fontSize = 18.sp,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.Normal,

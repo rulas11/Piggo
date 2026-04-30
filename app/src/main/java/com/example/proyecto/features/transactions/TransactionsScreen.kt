@@ -69,7 +69,7 @@ fun TransactionsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Prueba",
+                text = "Prueba Transacciones",
                 fontSize = 18.sp,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.Normal,
