@@ -44,7 +44,7 @@ fun DashboardScreen(
                 },
                 actions = {
                     IconButton(onClick = {navController.navigate("configuration")  }) {
-                        Icon(imageVector = Icons.Default.Settings, contentDescription = "Opciones")
+                        Icon(imageVector = Icons.Default.Settings, contentDescription = "Configuración")
                     }
                 }
             )
