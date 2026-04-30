@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val systemTheme = isSystemInDarkTheme() //Obtener el tema del sistema
+            val systemTheme = isSystemInDarkTheme()
             var isDarkTheme by remember { mutableStateOf(systemTheme) }
             ProyectoTheme(darkTheme = isDarkTheme){
                 Surface(
