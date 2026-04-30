@@ -5,9 +5,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.proyecto.features.dashboard.ConfigurationScreen
+import com.example.proyecto.ui.ConfigurationScreen
 import com.example.proyecto.features.dashboard.DashboardScreen
 import com.example.proyecto.features.dashboard.PiggoViewModel
+import com.example.proyecto.features.goals.GoalsScreen
+import com.example.proyecto.features.tips.TipsScreen
+import com.example.proyecto.features.analisis.AnalisisScreen
+import com.example.proyecto.features.transactions.TransactionsScreen
 
 @Composable
 fun PiggoNavGraph(
@@ -34,5 +38,30 @@ fun PiggoNavGraph(
                 onThemeToggle = onThemeChange
             )
         }
+
+        composable("analisis") {
+            AnalisisScreen(
+                navController = navController
+            )
+        }
+
+        composable("goals") {
+            GoalsScreen(
+                navController = navController
+            )
+        }
+
+        composable("transactions") {
+            TransactionsScreen(
+                navController = navController
+            )
+        }
+
+        composable("tips") {
+            TipsScreen(
+                navController = navController
+            )
+        }
+
     }
 }

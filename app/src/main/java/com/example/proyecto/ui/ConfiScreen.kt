@@ -1,7 +1,5 @@
-package com.example.proyecto.features.dashboard
+package com.example.proyecto.ui
 
-import android.graphics.Color
-import android.view.Surface
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,16 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -62,7 +56,7 @@ fun ConfigurationScreen(
         }
     ) { padding ->
         Column(
-            modifier = Modifier
+            modifier = Modifier.Companion
                 .padding(padding)
                 .fillMaxSize()
         ) {
@@ -76,15 +70,15 @@ fun ConfigurationScreen(
 
             ConfigSectionTitle("Personalización")
             Row(
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .fillMaxWidth()
                     .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Companion.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.Companion.CenterVertically) {
                     Icon(Icons.Default.Edit, contentDescription = null)
-                    Spacer(Modifier.width(16.dp))
+                    Spacer(Modifier.Companion.width(16.dp))
                     Text("Preferencias (Modo Oscuro)", style = MaterialTheme.typography.bodyLarge)
                 }
                 Switch(
@@ -103,13 +97,13 @@ fun ConfigSectionTitle(title: String) {
     Surface(color = MaterialTheme.colorScheme.surface) {
         Text(
             text = title,
-            modifier = Modifier
+            modifier = Modifier.Companion
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 10.dp),
             style = TextStyle(
                 fontFamily = MontserratFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp, // Texto más grande
+                fontWeight = FontWeight.Companion.SemiBold,
+                fontSize = 18.sp,
                 letterSpacing = 0.5.sp
             ),
             color = MaterialTheme.colorScheme.onBackground
@@ -120,13 +114,13 @@ fun ConfigSectionTitle(title: String) {
 @Composable
 fun ConfigItem(icon: ImageVector, text: String) {
     Row(
-        modifier = Modifier
+        modifier = Modifier.Companion
             .fillMaxWidth()
             .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Companion.CenterVertically
     ) {
         Icon(icon, contentDescription = null)
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.Companion.width(16.dp))
         Text(text, style = MaterialTheme.typography.bodyLarge)
     }
     Divider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)

@@ -16,9 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-// 1. Esquema de colores para Modo Oscuro
 private val DarkColorScheme = darkColorScheme(
-    primary = GreenSavings,      // Los colores que definiste en Color.kt
+    primary = GreenSavings,
     secondary = NavyDeep,
     tertiary = Pink80,
     background = DarkBackground,
@@ -27,7 +26,6 @@ private val DarkColorScheme = darkColorScheme(
     onBackground = TextLight
 )
 
-// 2. Esquema de colores para Modo Claro
 private val LightColorScheme = lightColorScheme(
     primary = LightPrimary,
     secondary = NavyDeep,
@@ -41,7 +39,6 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun ProyectoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color es una opción de Android 12+ (puedes ponerlo en false si quieres colores fijos)
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -54,7 +51,6 @@ fun ProyectoTheme(
         else -> LightColorScheme
     }
 
-    // Configuración de la barra de estado (color de la batería, hora, etc.)
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -64,10 +60,9 @@ fun ProyectoTheme(
         }
     }
 
-    // 3. Aplicación del Tema
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography, // La variable que definiste en Type.kt con Montserrat
+        typography = Typography,
         content = content
     )
 }

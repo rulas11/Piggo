@@ -15,12 +15,10 @@ val NavyDeep = Color(0xFF1B2631)
 val TextLight = Color(0xFFF7F9F9)
 val TextDark = Color(0xFF2C3E50)
 
-// Colores para Modo Oscuro
 val DarkPrimary = GreenSavings
 val DarkBackground = Color(0xFF12172E)
 val DarkSurface = Color(0xFF1E1E1E)
 
-// Colores para Modo Claro
 val LightPrimary = Color(0xFF18336B)
 val LightBackground = Color(0xFFE1EAFA)
 val LightSurface = Color(0xFFF2F4F4)
