@@ -1,8 +1,8 @@
 package com.example.proyecto
 
-import com.example.proyecto.features.dashboard.PiggoViewModel
-import com.example.proyecto.model.Category
-import com.example.proyecto.model.TransactionType
+import com.example.proyecto.features.dashboard.DashboardViewModel
+import com.example.proyecto.features.transactions.Category
+import com.example.proyecto.features.transactions.TransactionType
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -10,12 +10,9 @@ import java.util.Date
 
 class ExpenseLogicTest {
 
-    private lateinit var viewModel: PiggoViewModel
+    private lateinit var viewModel: DashboardViewModel
 
-    @Before
-    fun setup() {
-        viewModel = PiggoViewModel()
-    }
+
 
     @Test
     fun `cuando se agrega un gasto el balance disminuye correctamente`() {
@@ -26,11 +23,11 @@ class ExpenseLogicTest {
         // Acción: Agregar un gasto
         viewModel.addTransaction(
             amount = expenseAmount,
-            description = "Prueba Gasto",
+            desc = "Prueba Gasto",
             type = TransactionType.GASTO,
             category = Category.ALIMENTACION,
             isGoal = false,
-            date = Date()
+            dateMillis = Date()
         )
 
         // Verificación
@@ -47,11 +44,11 @@ class ExpenseLogicTest {
         // Acción: Agregar gasto a Alimentación
         viewModel.addTransaction(
             amount = expenseAmount,
-            description = "Cena",
+            desc = "Cena",
             type = TransactionType.GASTO,
             category = Category.ALIMENTACION,
             isGoal = false,
-            date = Date()
+            dateMillis = Date()
         )
 
         // Verificación
@@ -68,11 +65,11 @@ class ExpenseLogicTest {
         // Acción: Agregar un ingreso
         viewModel.addTransaction(
             amount = incomeAmount,
-            description = "Bono",
+            desc = "Bono",
             type = TransactionType.INGRESO,
             category = Category.INGRESO_VARIABLE,
             isGoal = false,
-            date = Date()
+            dateMillis = Date()
         )
 
         // Verificación

@@ -1,44 +1,54 @@
 package com.example.proyecto.features.transactions
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.proyecto.data.local.TransactionEntity
 import com.example.proyecto.ui.PiggoBottomBar
-import com.example.proyecto.ui.theme.MontserratFamily
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionsScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    transactions: List<TransactionEntity>
 ) {
+    var selectedTab by remember { mutableIntStateOf(3) }
+    val tabs = listOf("Hoy", "Semana", "Mes", "Todos")
+    val viewModel: Transaction = viewModel()
+    var transactionToEdit by remember { mutableStateOf<Transaction?>(null) }
 
-    val colorAzulMarino = Color(0xFF0058A2)
+
+    val filteredTransactions = remember(selectedTab, transactions) {
+        val now = Calendar.getInstance()
+        transactions.filter { tx ->
+            val txCal = Calendar.getInstance().apply { time = tx.dateMillis }
+            when (selectedTab) {
+                0 -> isSameDay(now, txCal)
+                1 -> isSameWeek(now, txCal)
+                2 -> isSameMonth(now, txCal)
+                else -> true
+            }
+        }.sortedByDescending { it.dateMillis }
+    }
+
+    val groupedTransactions = filteredTransactions.groupBy {
+        SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.getDefault()).format(it.dateMillis)
+    }
 
     Scaffold(
         topBar = {
@@ -66,62 +76,73 @@ fun TransactionsScreen(
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Prueba Transacciones",
-                fontSize = 18.sp,
-                fontFamily = MontserratFamily,
-                fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                PiggoCircularChart(
-                    title = "Prueba",
-                    progress = 0.40f,
-                    color = colorAzulMarino,
-                )
+                Text(text = "Movimientos", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            }
+
+            TabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = Color.Transparent,
+                contentColor = Color(0xFF1A346C)
+            ) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = { Text(text = title, fontSize = 12.sp) }
+                    )
+                }
+            }
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp),
+                contentPadding = PaddingValues(vertical = 16.dp)
+            ) {
+                groupedTransactions.forEach { (date, txs) ->
+                    item {
+                        Text(
+                            text = date.replaceFirstChar { it.uppercase() },
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+
+                    items(txs) { tx ->
+
+                    }
+                }
+
+                if (filteredTransactions.isEmpty()) {
+                    item {
+                        Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) {
+                            Text(text = "No hay movimientos en este periodo", color = Color.Gray)
+                        }
+                    }
+                }
             }
         }
     }
 }
 
-@Composable
-fun PiggoCircularChart(
-    title: String,
-    progress: Float,
-    color: Color,
-    titleColor: Color = MaterialTheme.colorScheme.onBackground
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.size(130.dp)
-    ) {
-        CircularProgressIndicator(
-            progress = 1f,
-            modifier = Modifier.fillMaxSize(),
-            color = Color.LightGray.copy(alpha = 0.3f),
-            strokeWidth = 14.dp
-        )
+private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
+    return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+            cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
+}
 
-        CircularProgressIndicator(
-            progress = progress,
-            modifier = Modifier.fillMaxSize(),
-            color = color,
-            strokeWidth = 14.dp,
-        )
+private fun isSameWeek(cal1: Calendar, cal2: Calendar): Boolean {
+    return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+            cal1.get(Calendar.WEEK_OF_YEAR) == cal2.get(Calendar.WEEK_OF_YEAR)
+}
 
-        Text(
-            text = title,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-    }
+private fun isSameMonth(cal1: Calendar, cal2: Calendar): Boolean {
+    return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+            cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH)
 }

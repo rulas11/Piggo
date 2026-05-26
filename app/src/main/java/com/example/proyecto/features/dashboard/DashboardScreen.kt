@@ -1,15 +1,15 @@
 package com.example.proyecto.features.dashboard
 
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,15 +22,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.proyecto.FinancialState
-import com.example.proyecto.features.history.HistoryBottomSheet
 import com.example.proyecto.features.transactions.QuickAddBottomSheet
-import com.example.proyecto.model.Transaction
+import com.example.proyecto.features.transactions.Transaction
 import com.example.proyecto.ui.PiggoBottomBar
 import com.example.proyecto.ui.PiggoMascot
 import java.text.SimpleDateFormat
@@ -39,14 +36,12 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
-    viewModel: PiggoViewModel,
+    viewModel: DashboardViewModel,
     navController: NavHostController,
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState: DashboardState by viewModel.uiState.collectAsState()
     var showQuickAdd by remember { mutableStateOf(false) }
     var isAddingExpense by remember { mutableStateOf(true) }
-    var showHistory by remember { mutableStateOf(false) }
-    
     var transactionToEdit by remember { mutableStateOf<Transaction?>(null) }
 
     val colorAzulMarino = Color(0xFF1A346C)
@@ -57,10 +52,15 @@ fun DashboardScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "PIGGO", fontWeight = FontWeight.Bold) },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "PIGGO", fontWeight = FontWeight.Bold)
+                    }
+                },
                 actions = {
-                    IconButton(onClick = { }) {
-                        Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Opciones")
+                    IconButton(onClick = {navController.navigate("configuration")  }) {
+                        Icon(imageVector = Icons.Default.Settings, contentDescription = "Opciones")
                     }
                 }
             )
@@ -77,7 +77,6 @@ fun DashboardScreen(
             item {
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                // Balance Centralizado
                 Text(
                     text = "Balance del mes: $${String.format(Locale.US, "%.2f", uiState.balance)}",
                     fontSize = 22.sp,
@@ -159,7 +158,6 @@ fun DashboardScreen(
                             CategoryLabel(cat)
                         }
 
-                        // Dinero libre = Balance
                         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp)) {
                             Box(modifier = Modifier.size(10.dp).background(Color.LightGray.copy(alpha = 0.5f), CircleShape))
                             Spacer(modifier = Modifier.width(8.dp))
@@ -171,54 +169,13 @@ fun DashboardScreen(
                             )
                         }
 
-                        if (uiState.categories.size > maxVisibleLabels) {
-                            Text(
-                                text = "Ver más...",
-                                fontSize = 11.sp,
-                                color = colorAzulMarino,
-                                modifier = Modifier.clickable { showHistory = true }.padding(top = 4.dp)
-                            )
-                        }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Movimientos:",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colorAzulMarino
-                    )
-                    Text(
-                        text = "Ver más...",
-                        fontSize = 14.sp,
-                        color = Color.Gray,
-                        modifier = Modifier.clickable { showHistory = true }
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
             }
 
-            items(uiState.recentTransactions.take(1)) { transaction ->
-                TransactionItem(
-                    transaction = transaction,
-                    onEdit = { 
-                        transactionToEdit = it
-                        isAddingExpense = !it.type.name.contains("INGRESO")
-                    },
-                    onDelete = { viewModel.deleteTransaction(it.id) }
-                )
-            }
-            
-            item {
-                Spacer(modifier = Modifier.height(100.dp))
-            }
         }
 
         if (showQuickAdd || (transactionToEdit != null)) {
@@ -231,9 +188,24 @@ fun DashboardScreen(
                 },
                 onSave = { amount, desc, type, cat, isGoal, date ->
                     if (transactionToEdit != null) {
-                        viewModel.updateTransaction(transactionToEdit!!.id, amount, desc, type, cat, isGoal, date)
+                        viewModel.updateTransaction(
+                            id = transactionToEdit!!.id,
+                            amount = amount,
+                            desc = desc,
+                            type = type,
+                            category = cat,
+                            isGoal = isGoal,
+                            dateMillis = date
+                        )
                     } else {
-                        viewModel.addTransaction(amount, desc, type, cat, isGoal, date)
+                        viewModel.addTransaction(
+                            amount = amount,
+                            desc = desc,
+                            type = type,
+                            category = cat,
+                            isGoal = isGoal,
+                            dateMillis = date
+                        )
                     }
                     showQuickAdd = false
                     transactionToEdit = null
@@ -241,18 +213,6 @@ fun DashboardScreen(
             )
         }
 
-        if (showHistory) {
-            HistoryBottomSheet(
-                transactions = uiState.recentTransactions,
-                onDismiss = { showHistory = false },
-                onEditTransaction = {
-                    transactionToEdit = it
-                    isAddingExpense = !it.type.name.contains("INGRESO")
-                    showHistory = false
-                },
-                onDeleteTransaction = { viewModel.deleteTransaction(it.id) }
-            )
-        }
     }
 }
 
@@ -270,27 +230,13 @@ fun ActionButton(text: String, color: Color, modifier: Modifier = Modifier, onCl
 }
 
 @Composable
-fun CategoryLabel(cat: CategoryBudget) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp)) {
-        Box(modifier = Modifier.size(10.dp).background(cat.color, CircleShape))
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = "${cat.category.name.replace("_", " ")}: $${cat.spent.toInt()}/$${cat.budget.toInt()}",
-            fontSize = 11.sp,
-            color = if (cat.spent > cat.budget) Color.Red else Color(0xFF4CAF50),
-            fontWeight = FontWeight.Medium
-        )
-    }
-}
-
-@Composable
 fun AnimatedPieChart(categories: List<CategoryBudget>, totalIncome: Double) {
     val totalSpent = categories.sumOf { it.spent }
     val incomeToUse = totalIncome.coerceAtLeast(totalSpent)
-    
+
     Canvas(modifier = Modifier.fillMaxSize().padding(8.dp)) {
         var startAngle = -90f
-        
+
         drawCircle(
             color = Color.Black.copy(alpha = 0.1f),
             radius = size.minDimension / 2,
@@ -302,7 +248,9 @@ fun AnimatedPieChart(categories: List<CategoryBudget>, totalIncome: Double) {
             if (sweepAngle > 0) {
                 drawArc(
                     brush = Brush.radialGradient(
-                        colors = listOf(cat.color.copy(alpha = 0.8f), cat.color),
+                        colors = listOf(
+                            cat.color.copy(alpha = 0.8f),
+                            cat.color),
                         center = center,
                         radius = size.minDimension / 2
                     ),
@@ -335,10 +283,24 @@ fun AnimatedPieChart(categories: List<CategoryBudget>, totalIncome: Double) {
 }
 
 @Composable
+fun CategoryLabel(cat: CategoryBudget) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp)) {
+        Box(modifier = Modifier.size(10.dp))
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = "${cat.category.name.replace("_", " ")}: $${cat.spent.toInt()}/$${cat.budget.toInt()}",
+            fontSize = 11.sp,
+            color = if (cat.spent > cat.budget) Color.Red else Color(0xFF4CAF50),
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+@Composable
 fun TransactionItem(
     transaction: Transaction,
     onEdit: (Transaction) -> Unit,
-    onDelete: (Transaction) -> Unit,
+    onDelete: (Transaction) -> Unit
 ) {
     val sdf = SimpleDateFormat("dd MMM", Locale.getDefault())
     var showMenu by remember { mutableStateOf(false) }
@@ -430,10 +392,4 @@ fun getHumorousPhrase(state: FinancialState): String {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DashboardPreview() {
-    val viewModel = PiggoViewModel()
-    val navController = rememberNavController()
-    DashboardScreen(viewModel = viewModel, navController = navController)
-}
+
