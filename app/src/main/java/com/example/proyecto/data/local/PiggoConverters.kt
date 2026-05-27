@@ -1,8 +1,8 @@
 package com.example.proyecto.data.local
 
 import androidx.room.TypeConverter
-import com.example.proyecto.features.transactions.Category
-import com.example.proyecto.features.transactions.TransactionType
+import com.example.proyecto.Category
+import com.example.proyecto.TransactionType
 import java.util.Date
 
 class PiggoConverters {

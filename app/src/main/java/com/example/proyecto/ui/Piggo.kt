@@ -12,8 +12,9 @@ import com.example.proyecto.R
 @Composable
 fun PiggoMascot(state: FinancialState) {
     val resId = when(state) {
-        FinancialState.PERFECT, FinancialState.GOOD -> R.raw.piggo_idle
-        FinancialState.STABLE -> R.raw.piggo_happy
+        FinancialState.PERFECT -> R.raw.piggo_perfect
+        FinancialState.GOOD -> R.raw.piggo_happy
+        FinancialState.STABLE -> R.raw.piggo_idle
         FinancialState.WARNING -> R.raw.piggo_warning
         FinancialState.CRITICAL -> R.raw.piggo_panic
     }

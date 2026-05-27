@@ -1,15 +1,13 @@
 package com.example.proyecto.features.dashboard
 
-import android.R
 import androidx.compose.ui.graphics.Color
-import androidx.core.graphics.alpha
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.proyecto.FinancialState
 import com.example.proyecto.data.local.TransactionEntity
 import com.example.proyecto.data.repository.TransactionRepository
-import com.example.proyecto.features.transactions.Category
-import com.example.proyecto.features.transactions.TransactionType
-import com.example.proyecto.ui.theme.Purple80
+import com.example.proyecto.Category
+import com.example.proyecto.TransactionType
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -50,10 +48,16 @@ class DashboardViewModel(
                     )
                 }
 
+            val gastosTotales = gastosPorCategoria.sumOf { it.spent }
+
+            val estadoActual = calcularEstadoFinanciero(ingresosTotales, gastosTotales)
+
+
             DashboardState(
                 recentTransactions = transactionsList,
                 totalIncome = ingresosTotales,
-                categories = gastosPorCategoria
+                categories = gastosPorCategoria,
+                financialState = estadoActual
             )
         }
         .stateIn(
@@ -67,7 +71,6 @@ class DashboardViewModel(
         desc: String,
         type: TransactionType,
         category: Category,
-        isGoal: Boolean,
         dateMillis: Date
     ) {
         viewModelScope.launch {
@@ -76,32 +79,9 @@ class DashboardViewModel(
                 description = desc,
                 isIncome = type,
                 category = category,
-                isGoal = isGoal,
                 dateMillis = dateMillis
             )
             repository.addTransaction(newTransaction)
-        }
-    }
-
-    fun updateTransaction(
-        id: Int,
-        amount: Double,
-        desc: String,
-        type: TransactionType,
-        category: Category,
-        isGoal: Boolean,
-        dateMillis: Date
-    ) {
-        viewModelScope.launch {
-            val updatedTransaction = TransactionEntity(
-                amount = amount,
-                description = desc,
-                isIncome = type,
-                category = category,
-                isGoal = isGoal,
-                dateMillis = dateMillis
-            )
-            repository.addTransaction(updatedTransaction)
         }
     }
 }
@@ -112,7 +92,10 @@ fun obtenerColorPorCategoria(categoria: String): Color {
     val rosaPastel = Color(0xFFFFC4D1)
     val amarilloMostaza = Color(0xFFFFD166)
     val lilaSuave = Color(0xFFB19CD9)
-
+    val rojo = Color(0xFF600000)
+    val azulClaro = Color(0xFF006BEF)
+    val naranja = Color(0xFFB26400)
+    val verde = Color(0xFF597A00)
 
     return when (categoria.uppercase()) {
 
@@ -121,10 +104,34 @@ fun obtenerColorPorCategoria(categoria: String): Color {
 
         "SALUD" -> amarilloMostaza
 
-        "ALIMENTACION" -> azulMarino
+        "EDUCACION" -> rojo
+
+        "ALIMENTACION" -> verde
+
+        "TRANSPORTE" -> azulMarino
+
+        "SERVICIOS" -> azulClaro
+
+        "ENTRETENIMIENTO" -> naranja
 
         "OTROS" -> lilaSuave
 
         else -> rosaPastel
+    }
+}
+
+private fun calcularEstadoFinanciero(ingresos: Double, gastos: Double): FinancialState {
+    if (ingresos <= 0.0) {
+        return if (gastos > 0) FinancialState.CRITICAL else FinancialState.STABLE
+    }
+
+    val porcentajeGastado = (gastos / ingresos) * 100
+
+    return when {
+        porcentajeGastado <= 25.0 -> FinancialState.PERFECT
+        porcentajeGastado <= 50.0 -> FinancialState.GOOD
+        porcentajeGastado <= 75.0 -> FinancialState.STABLE
+        porcentajeGastado < 100.0 -> FinancialState.WARNING
+        else -> FinancialState.CRITICAL
     }
 }

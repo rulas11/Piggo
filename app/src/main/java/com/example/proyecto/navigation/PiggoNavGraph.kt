@@ -19,6 +19,7 @@ import com.example.proyecto.features.tips.TipsScreen
 import com.example.proyecto.features.analisis.AnalisisScreen
 import com.example.proyecto.features.dashboard.DashboardViewModel
 import com.example.proyecto.features.transactions.TransactionsScreen
+import com.example.proyecto.features.transactions.TransactionsViewModel
 
 @Composable
 fun PiggoNavGraph(
@@ -68,20 +69,19 @@ fun PiggoNavGraph(
             )
         }
 
-        composable("transactions") {
-            val viewModel: DashboardViewModel = viewModel(
+        composable(route = "transactions") {
+            val viewModel: TransactionsViewModel = viewModel(
                 factory = object : ViewModelProvider.Factory {
                     @Suppress("UNCHECKED_CAST")
                     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        return DashboardViewModel(repository) as T
+                        return TransactionsViewModel(repository) as T
                     }
                 }
             )
-            val uiState by viewModel.uiState.collectAsState()
 
             TransactionsScreen(
                 navController = navController,
-                transactions = uiState.recentTransactions
+                viewModel = viewModel
             )
         }
 

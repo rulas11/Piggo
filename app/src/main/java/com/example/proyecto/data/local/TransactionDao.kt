@@ -17,7 +17,4 @@ interface TransactionDao {
 
     @Delete
     suspend fun deleteTransaction(transaction: TransactionEntity)
-
-    @Query("SELECT SUM(amount) FROM transactions WHERE isIncome = 0")
-    fun getTotalExpenses(): Flow<Double?>
 }

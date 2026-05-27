@@ -1,4 +1,4 @@
-package com.example.proyecto.features.transactions
+package com.example.proyecto.features
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,6 +13,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.proyecto.Category
+import com.example.proyecto.TransactionType
+import com.example.proyecto.data.local.TransactionEntity
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -20,32 +23,43 @@ import java.util.*
 @Composable
 fun QuickAddBottomSheet(
     isExpense: Boolean,
-    initialTransaction: Transaction? = null,
+    initialTransaction: TransactionEntity? = null,
     onDismiss: () -> Unit,
-    onSave: (Double, String, TransactionType, Category, Boolean, Date) -> Unit
+    onSave: (Double, String, TransactionType, Category, Date) -> Unit
 ) {
     var amount by remember { mutableStateOf(initialTransaction?.amount?.toString() ?: "") }
     var description by remember { mutableStateOf(initialTransaction?.description ?: "") }
-    
-    // Categorías filtradas por tipo (Gasto o Ingreso)
+
+    var amountError by remember { mutableStateOf(false) }
+    var descriptionError by remember { mutableStateOf(false) }
+
     val expenseCategories = listOf(
         Category.VIVIENDA, Category.SALUD, Category.EDUCACION,
         Category.ALIMENTACION, Category.TRANSPORTE, Category.SERVICIOS,
         Category.ENTRETENIMIENTO, Category.OTROS
     )
     val incomeCategories = listOf(Category.INGRESO_FIJO, Category.INGRESO_VARIABLE)
-    
+
     val availableCategories = if (isExpense) expenseCategories else incomeCategories
-    
-    var selectedCategory by remember { 
-        mutableStateOf(initialTransaction?.category ?: availableCategories.first()) 
+
+    var selectedCategory by remember {
+        mutableStateOf(
+            initialTransaction?.category?.let {
+                try {
+                    Category.valueOf(it.name.uppercase())
+                } catch (e: Exception) {
+                    availableCategories.first()
+                }
+            } ?: availableCategories.first()
+        )
     }
-    var isGoal by remember { mutableStateOf(initialTransaction?.isGoal ?: false) }
-    
+
     var showDatePicker by remember { mutableStateOf(false) }
+
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = initialTransaction?.date?.time ?: System.currentTimeMillis()
+        initialSelectedDateMillis = initialTransaction?.dateMillis?.time ?: System.currentTimeMillis()
     )
+
     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     val selectedDateText = datePickerState.selectedDateMillis?.let { sdf.format(Date(it)) } ?: sdf.format(Date())
 
@@ -58,7 +72,7 @@ fun QuickAddBottomSheet(
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = if (initialTransaction != null) "Editar Movimiento" else (if (isExpense) "Registrar Gasto" else "Registrar Ingreso"),
+                text = if (isExpense) "Registrar Gasto" else "Registrar Ingreso",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -83,14 +97,6 @@ fun QuickAddBottomSheet(
             )
 
             Spacer(modifier = Modifier.height(12.dp))
-
-            if (isExpense) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = isGoal, onCheckedChange = { isGoal = it })
-                    Text("¿Es una meta?", fontSize = 14.sp)
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-            }
 
             OutlinedTextField(
                 value = selectedDateText,
@@ -117,16 +123,28 @@ fun QuickAddBottomSheet(
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { 
-                    val amt = amount.toDoubleOrNull() ?: 0.0
-                    val date = datePickerState.selectedDateMillis?.let { Date(it) } ?: Date()
-                    val type = if (isExpense) TransactionType.GASTO else TransactionType.INGRESO
-                    onSave(amt, description, type, selectedCategory, isGoal, date)
+                onClick = {
+                    val finalAmount = amount.toDoubleOrNull() ?: 0.0
+                    val isAmountValid = finalAmount > 0.0
+
+                    val isDescriptionValid = description.isNotBlank()
+
+                    amountError = !isAmountValid
+                    descriptionError = !isDescriptionValid
+
+                    if (isAmountValid && isDescriptionValid) {
+                        onSave(
+                            finalAmount,
+                            description.trim(),
+                            if (isExpense) TransactionType.GASTO else TransactionType.INGRESO,
+                            selectedCategory,
+                            Date(datePickerState.selectedDateMillis ?: System.currentTimeMillis())
+                        )
+                    }
                 },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = amount.isNotEmpty()
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(if (initialTransaction != null) "Guardar Cambios" else "Guardar")
+                Text("Guardar")
             }
         }
     }

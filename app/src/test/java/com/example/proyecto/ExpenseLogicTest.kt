@@ -1,10 +1,7 @@
 package com.example.proyecto
 
 import com.example.proyecto.features.dashboard.DashboardViewModel
-import com.example.proyecto.features.transactions.Category
-import com.example.proyecto.features.transactions.TransactionType
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Test
 import java.util.Date
 
@@ -26,7 +23,6 @@ class ExpenseLogicTest {
             desc = "Prueba Gasto",
             type = TransactionType.GASTO,
             category = Category.ALIMENTACION,
-            isGoal = false,
             dateMillis = Date()
         )
 
@@ -47,7 +43,6 @@ class ExpenseLogicTest {
             desc = "Cena",
             type = TransactionType.GASTO,
             category = Category.ALIMENTACION,
-            isGoal = false,
             dateMillis = Date()
         )
 
@@ -68,7 +63,6 @@ class ExpenseLogicTest {
             desc = "Bono",
             type = TransactionType.INGRESO,
             category = Category.INGRESO_VARIABLE,
-            isGoal = false,
             dateMillis = Date()
         )
 

@@ -1,16 +1,10 @@
-package com.example.proyecto.features.transactions
+package com.example.proyecto
 
 enum class TransactionType {
     INGRESO,
     GASTO
 }
 
-enum class PaymentMethod {
-    EFECTIVO,
-    TARJETA_DEBITO,
-    TARJETA_CREDITO,
-    DEUDA
-}
 
 enum class Category {
     // Categorías de Gasto (Inherentes)
@@ -31,4 +25,12 @@ enum class Category {
 
     // Sistema
     DINERO_LIBRE
+}
+
+enum class FinancialState {
+    PERFECT,    // 100% de categorías bajo presupuesto
+    GOOD,       // >= 75%
+    STABLE,     // >= 50%
+    WARNING,    // >= 25%
+    CRITICAL    // > 0% o sobregastado total
 }
