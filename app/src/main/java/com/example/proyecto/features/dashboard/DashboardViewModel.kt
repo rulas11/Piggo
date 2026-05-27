@@ -87,15 +87,15 @@ class DashboardViewModel(
 }
 
 fun obtenerColorPorCategoria(categoria: String): Color {
-    val azulMarino = Color(0xFF1A346C)
-    val verdeMenta = Color(0xFF92E8BF)
+    val azulMarino = Color(0xFF361AB6)
+    val verdeMenta = Color(0xFF15B05E)
     val rosaPastel = Color(0xFFFFC4D1)
-    val amarilloMostaza = Color(0xFFFFD166)
+    val amarilloMostaza = Color(0xFFCEA457)
     val lilaSuave = Color(0xFFB19CD9)
-    val rojo = Color(0xFF600000)
+    val rojo = Color(0xFFB20000)
     val azulClaro = Color(0xFF006BEF)
-    val naranja = Color(0xFFB26400)
-    val verde = Color(0xFF597A00)
+    val naranja = Color(0xFF8F5000)
+    val verde = Color(0xFF627E25)
 
     return when (categoria.uppercase()) {
 

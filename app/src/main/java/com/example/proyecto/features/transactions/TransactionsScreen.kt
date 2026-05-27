@@ -90,12 +90,12 @@ fun TransactionsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFF13172E))
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
         ) {
             Text(
                 text = "Movimientos",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.background,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(24.dp)
@@ -104,7 +104,7 @@ fun TransactionsScreen(
             TabRow(
                 selectedTabIndex = selectedTimeTab,
                 containerColor = Color.Transparent,
-                contentColor = Color.White,
+                contentColor = MaterialTheme.colorScheme.onBackground,
                 indicator = { tabPositions ->
                     TabRowDefaults.Indicator(
                         Modifier.tabIndicatorOffset(tabPositions[selectedTimeTab]),
@@ -156,7 +156,7 @@ fun TransactionsScreen(
                         item {
                             Text(
                                 text = dateStr.replaceFirstChar { it.uppercase() },
-                                color = Color.LightGray,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
                                 modifier = Modifier.padding(vertical = 12.dp)
@@ -205,7 +205,7 @@ fun TransactionItemCard(
 
     Card(
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -216,13 +216,13 @@ fun TransactionItemCard(
             Column {
                 Text(
                     text = tx.description.toString(),
-                    color = Color(0xFF1A346C),
+                    color = MaterialTheme.colorScheme.surface,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
                 Text(
                     text = tx.category.name.toString(),
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.surface,
                     fontSize = 14.sp
                 )
             }

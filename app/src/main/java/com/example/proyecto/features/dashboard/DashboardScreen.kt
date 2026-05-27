@@ -80,7 +80,7 @@ fun DashboardScreen(
                     text = "Balance del mes: $${String.format(Locale.US, "%.2f", uiState.balance)}",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorAzulMarino
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -93,7 +93,7 @@ fun DashboardScreen(
                     text = getStatusPhrase(uiState.financialState),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorAzulMarino
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     text = "\"${getHumorousPhrase(uiState.financialState)}\"",
@@ -134,7 +134,7 @@ fun DashboardScreen(
                     text = "Resumen de gastos en $currentMonth",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorAzulMarino,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -182,7 +182,7 @@ fun DashboardScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = "Dinero libre: $${uiState.balance}",
-                                color = Color.LightGray,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )
